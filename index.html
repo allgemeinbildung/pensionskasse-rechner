@@ -4,8 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pensionskassen-Rechner für Jugendliche</title>
-    <link rel="stylesheet" href="css/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; }
+        h1, h2 { color: #333; }
+        form { margin-bottom: 20px; }
+        label { display: block; margin-top: 10px; }
+        input, select { margin-bottom: 10px; padding: 5px; width: 200px; }
+        button { background-color: #4CAF50; border: none; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; }
+        #result-section { background-color: #f2f2f2; padding: 20px; border-radius: 5px; }
+        .chart-container { width: 80%; margin: 20px auto; }
+    </style>
 </head>
 <body>
     <header>
@@ -18,6 +27,9 @@
             <form id="pension-form">
                 <label for="age">Dein Alter:</label>
                 <input type="number" id="age" name="age" min="15" max="20" required>
+                
+                <label for="retirement-age">Geplantes Pensionsalter:</label>
+                <input type="number" id="retirement-age" name="retirement-age" min="58" max="70" required>
                 
                 <fieldset>
                     <legend>Wähle deine Lohndaten:</legend>
@@ -47,17 +59,17 @@
                     <input type="number" id="end-salary" name="end-salary" min="2000" max="20000">
                 </div>
                 
-                <label for="retirement-age">Geplantes Pensionsalter:</label>
-                <input type="number" id="retirement-age" name="retirement-age" min="58" max="70" required>
-                
                 <button type="submit">Berechnen</button>
             </form>
         </section>
         
         <section id="result-section" style="display: none;">
             <h2>Deine Pensionskasse</h2>
-            <div id="chart-container">
-                <canvas id="pension-chart"></canvas>
+            <div class="chart-container">
+                <canvas id="salary-savings-chart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="pension-comparison-chart"></canvas>
             </div>
             <div id="summary">
                 <h3>Zusammenfassung</h3>
@@ -73,10 +85,6 @@
                     <li>Mit 6.0% Umwandlungssatz: <span id="yearly-pension-60"></span> CHF</li>
                 </ul>
             </div>
-            <div id="chart-container">
-                <canvas id="salary-savings-chart"></canvas>
-                <canvas id="pension-comparison-chart"></canvas>
-            </div>
         </section>
     </main>
     
@@ -85,8 +93,8 @@
     </footer>
 
     <script>
-    // Konstanten
-    const INFLATION_RATE = 0.01; // 1% jährliche Inflation
+    // Constants
+    const INFLATION_RATE = 0.01; // 1% annual inflation
     const BVG_RATES = {
         '25-34': 0.07,
         '35-44': 0.10,
@@ -94,7 +102,9 @@
         '55-64': 0.18
     };
 
-    // Hauptfunktion zur Berechnung des Pensionskassenguthabens
+    let salaryChart, pensionChart;
+
+    // Main calculation function
     function calculatePensionSavings(startAge, retirementAge, startSalary, endSalary) {
         let totalSavings = 0;
         let currentSalary = startSalary;
@@ -103,18 +113,18 @@
 
         for (let age = startAge; age < retirementAge; age++) {
             const bvgRate = getBVGRate(age);
-            const yearlyContribution = currentSalary * bvgRate * 12; // 12 Monate
+            const yearlyContribution = currentSalary * bvgRate * 12; // 12 months
             totalSavings += yearlyContribution;
 
-            // Inflationsanpassung und Lohnanstieg für das nächste Jahr
+            // Inflation adjustment and salary increase for the next year
             currentSalary = (currentSalary + annualSalaryIncrease) * (1 + INFLATION_RATE);
-            totalSavings *= (1 + INFLATION_RATE); // Auch die Ersparnisse werden der Inflation angepasst
+            totalSavings *= (1 + INFLATION_RATE); // Savings are also adjusted for inflation
         }
 
         return totalSavings;
     }
 
-    // Hilfsfunktion zur Bestimmung des BVG-Satzes basierend auf dem Alter
+    // Helper function to determine BVG rate based on age
     function getBVGRate(age) {
         if (age < 25) return 0;
         if (age >= 25 && age <= 34) return BVG_RATES['25-34'];
@@ -123,80 +133,19 @@
         if (age >= 55) return BVG_RATES['55-64'];
     }
 
-    // Funktion zur Berechnung der monatlichen Rente
+    // Function to calculate monthly pension
     function calculateMonthlyPension(totalSavings, conversionRate) {
         const yearlyPension = totalSavings * conversionRate;
         return yearlyPension / 12;
     }
 
-    // Event-Listener für das Formular
-    document.getElementById('pension-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const age = parseInt(document.getElementById('age').value);
-        const retirementAge = parseInt(document.getElementById('retirement-age').value);
-        let startSalary, endSalary;
-
-        if (document.getElementById('preset-salary').checked) {
-            const preset = document.getElementById('salary-preset').value;
-            [startSalary, endSalary] = getPresetSalaries(preset);
-        } else {
-            startSalary = parseInt(document.getElementById('start-salary').value);
-            endSalary = parseInt(document.getElementById('end-salary').value);
-        }
-
-        const totalSavings = calculatePensionSavings(age, retirementAge, startSalary, endSalary);
-        updateResults(totalSavings);
-    });
-
-    // Funktion zum Abrufen vorgegebener Gehälter
-    function getPresetSalaries(preset) {
-        const presets = {
-            'example1': [4000, 8000],
-            'example2': [4500, 10000],
-            'example3': [3800, 7500],
-            'example4': [4200, 8500],
-            'example5': [5000, 9500]
-        };
-        return presets[preset];
-    }
-
-    // Funktion zur Aktualisierung der Ergebnisse in der UI
-    function updateResults(totalSavings) {
-        document.getElementById('total-capital').textContent = totalSavings.toFixed(2);
-        document.getElementById('monthly-pension-68').textContent = calculateMonthlyPension(totalSavings, 0.068).toFixed(2);
-        document.getElementById('monthly-pension-60').textContent = calculateMonthlyPension(totalSavings, 0.060).toFixed(2);
-        document.getElementById('yearly-pension-68').textContent = (calculateMonthlyPension(totalSavings, 0.068) * 12).toFixed(2);
-        document.getElementById('yearly-pension-60').textContent = (calculateMonthlyPension(totalSavings, 0.060) * 12).toFixed(2);
-
-        document.getElementById('result-section').style.display = 'block';
-        updateChart(totalSavings);
-        updateCharts(age, retirementAge, startSalary, endSalary, totalSavings);
-    }
-
-    // Funktion zur Aktualisierung des Diagramms
-    function updateChart(totalSavings) {
-        // Hier können Sie den Code für die Aktualisierung des Chart.js-Diagramms einfügen
-        // Dies hängt von der genauen Art des Diagramms ab, das Sie anzeigen möchten
-    }
-
-    // Zusätzliche Event-Listener für die Umschaltung zwischen vorgegebenen und benutzerdefinierten Gehältern
-    document.getElementById('preset-salary').addEventListener('change', function() {
-        document.getElementById('preset-salary-options').style.display = 'block';
-        document.getElementById('custom-salary-inputs').style.display = 'none';
-    });
-
-    document.getElementById('custom-salary').addEventListener('change', function() {
-        document.getElementById('preset-salary-options').style.display = 'none';
-        document.getElementById('custom-salary-inputs').style.display = 'block';
-    });
-    let salaryChart, pensionChart;
-    
+    // Function to update charts
     function updateCharts(startAge, retirementAge, startSalary, endSalary, totalSavings) {
         updateSalaryAndSavingsChart(startAge, retirementAge, startSalary, endSalary, totalSavings);
         updatePensionComparisonChart(totalSavings);
     }
-    
+
+    // Function to update salary and savings chart
     function updateSalaryAndSavingsChart(startAge, retirementAge, startSalary, endSalary, totalSavings) {
         const labels = [];
         const salaryData = [];
@@ -205,25 +154,25 @@
         const annualSalaryIncrease = (endSalary - startSalary) / yearsWorking;
         let currentSalary = startSalary;
         let currentSavings = 0;
-    
+
         for (let age = startAge; age <= retirementAge; age++) {
             labels.push(age);
-            salaryData.push(currentSalary * 12);  // Jahresgehalt
+            salaryData.push(currentSalary * 12);  // Annual salary
             savingsData.push(currentSavings);
-    
+
             const bvgRate = getBVGRate(age);
             const yearlyContribution = currentSalary * bvgRate * 12;
             currentSavings += yearlyContribution;
-    
+
             currentSalary += annualSalaryIncrease;
             currentSalary *= (1 + INFLATION_RATE);
             currentSavings *= (1 + INFLATION_RATE);
         }
-    
+
         if (salaryChart) {
             salaryChart.destroy();
         }
-    
+
         salaryChart = new Chart(document.getElementById('salary-savings-chart'), {
             type: 'line',
             data: {
@@ -261,15 +210,16 @@
             }
         });
     }
-    
+
+    // Function to update pension comparison chart
     function updatePensionComparisonChart(totalSavings) {
         const monthlyPension68 = calculateMonthlyPension(totalSavings, 0.068);
         const monthlyPension60 = calculateMonthlyPension(totalSavings, 0.060);
-    
+
         if (pensionChart) {
             pensionChart.destroy();
         }
-    
+
         pensionChart = new Chart(document.getElementById('pension-comparison-chart'), {
             type: 'bar',
             data: {
@@ -300,7 +250,63 @@
                     }
                 }
             }
-        });    
+        });
+    }
+
+    // Function to get preset salaries
+    function getPresetSalaries(preset) {
+        const presets = {
+            'example1': [4000, 8000],
+            'example2': [4500, 10000],
+            'example3': [3800, 7500],
+            'example4': [4200, 8500],
+            'example5': [5000, 9500]
+        };
+        return presets[preset];
+    }
+
+    // Function to update results in the UI
+    function updateResults(totalSavings, age, retirementAge, startSalary, endSalary) {
+        document.getElementById('total-capital').textContent = totalSavings.toFixed(2);
+        document.getElementById('monthly-pension-68').textContent = calculateMonthlyPension(totalSavings, 0.068).toFixed(2);
+        document.getElementById('monthly-pension-60').textContent = calculateMonthlyPension(totalSavings, 0.060).toFixed(2);
+        document.getElementById('yearly-pension-68').textContent = (calculateMonthlyPension(totalSavings, 0.068) * 12).toFixed(2);
+        document.getElementById('yearly-pension-60').textContent = (calculateMonthlyPension(totalSavings, 0.060) * 12).toFixed(2);
+
+        document.getElementById('result-section').style.display = 'block';
+        updateCharts(age, retirementAge, startSalary, endSalary, totalSavings);
+    }
+
+    // Event listener for form submission
+    document.getElementById('pension-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const age = parseInt(document.getElementById('age').value);
+        const retirementAge = parseInt(document.getElementById('retirement-age').value);
+        let startSalary, endSalary;
+
+        if (document.getElementById('preset-salary').checked) {
+            const preset = document.getElementById('salary-preset').value;
+            [startSalary, endSalary] = getPresetSalaries(preset);
+        } else {
+            startSalary = parseInt(document.getElementById('start-salary').value);
+            endSalary = parseInt(document.getElementById('end-salary').value);
+        }
+
+        const totalSavings = calculatePensionSavings(age, retirementAge, startSalary, endSalary);
+        updateResults(totalSavings, age, retirementAge, startSalary, endSalary);
+    });
+
+    // Event listeners for salary type selection
+    document.getElementById('preset-salary').addEventListener('change', function() {
+        document.getElementById('preset-salary-options').style.display = 'block';
+        document.getElementById('custom-salary-inputs').style.display = 'none';
+    });
+
+    document.getElementById('custom-salary').addEventListener('change', function() {
+        document.getElementById('preset-salary-options').style.display = 'none';
+        document.getElementById('custom-salary-inputs').style.display = 'block';
+    });
     </script>
 </body>
 </html>
