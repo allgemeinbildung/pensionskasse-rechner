@@ -73,6 +73,10 @@
                     <li>Mit 6.0% Umwandlungssatz: <span id="yearly-pension-60"></span> CHF</li>
                 </ul>
             </div>
+            <div id="chart-container">
+                <canvas id="salary-savings-chart"></canvas>
+                <canvas id="pension-comparison-chart"></canvas>
+            </div>
         </section>
     </main>
     
@@ -167,6 +171,7 @@
 
         document.getElementById('result-section').style.display = 'block';
         updateChart(totalSavings);
+        updateCharts(age, retirementAge, startSalary, endSalary, totalSavings);
     }
 
     // Funktion zur Aktualisierung des Diagramms
@@ -185,6 +190,117 @@
         document.getElementById('preset-salary-options').style.display = 'none';
         document.getElementById('custom-salary-inputs').style.display = 'block';
     });
+    let salaryChart, pensionChart;
+    
+    function updateCharts(startAge, retirementAge, startSalary, endSalary, totalSavings) {
+        updateSalaryAndSavingsChart(startAge, retirementAge, startSalary, endSalary, totalSavings);
+        updatePensionComparisonChart(totalSavings);
+    }
+    
+    function updateSalaryAndSavingsChart(startAge, retirementAge, startSalary, endSalary, totalSavings) {
+        const labels = [];
+        const salaryData = [];
+        const savingsData = [];
+        const yearsWorking = retirementAge - startAge;
+        const annualSalaryIncrease = (endSalary - startSalary) / yearsWorking;
+        let currentSalary = startSalary;
+        let currentSavings = 0;
+    
+        for (let age = startAge; age <= retirementAge; age++) {
+            labels.push(age);
+            salaryData.push(currentSalary * 12);  // Jahresgehalt
+            savingsData.push(currentSavings);
+    
+            const bvgRate = getBVGRate(age);
+            const yearlyContribution = currentSalary * bvgRate * 12;
+            currentSavings += yearlyContribution;
+    
+            currentSalary += annualSalaryIncrease;
+            currentSalary *= (1 + INFLATION_RATE);
+            currentSavings *= (1 + INFLATION_RATE);
+        }
+    
+        if (salaryChart) {
+            salaryChart.destroy();
+        }
+    
+        salaryChart = new Chart(document.getElementById('salary-savings-chart'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Jahresgehalt',
+                    data: salaryData,
+                    borderColor: 'blue',
+                    fill: false
+                }, {
+                    label: 'Angespartes Kapital',
+                    data: savingsData,
+                    borderColor: 'green',
+                    backgroundColor: 'rgba(0, 255, 0, 0.2)',
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Alter'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'CHF'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+    
+    function updatePensionComparisonChart(totalSavings) {
+        const monthlyPension68 = calculateMonthlyPension(totalSavings, 0.068);
+        const monthlyPension60 = calculateMonthlyPension(totalSavings, 0.060);
+    
+        if (pensionChart) {
+            pensionChart.destroy();
+        }
+    
+        pensionChart = new Chart(document.getElementById('pension-comparison-chart'), {
+            type: 'bar',
+            data: {
+                labels: ['Monatliche Rente', 'Jährliche Rente'],
+                datasets: [{
+                    label: '6.8% Umwandlungssatz',
+                    data: [monthlyPension68, monthlyPension68 * 12],
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    borderWidth: 1
+                }, {
+                    label: '6.0% Umwandlungssatz',
+                    data: [monthlyPension60, monthlyPension60 * 12],
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgb(54, 162, 235)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'CHF'
+                        }
+                    }
+                }
+            }
+        });    
     </script>
 </body>
 </html>
