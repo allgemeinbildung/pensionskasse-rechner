@@ -18,6 +18,14 @@
         .salary-info { margin-top: 10px; font-style: italic; color: #666; }
         .hidden { display: none; }
         .checkbox-group { margin-left: 20px; }
+        .info-text {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -46,9 +54,13 @@
                         <label for="custom-salary">B. Eigene Eingabe</label>
                     </div>
                 </fieldset>
-
-
-
+                <div id="preset-salary-info" class="info-text">
+                    <p>Hier kannst du aus vorgegebenen Beispielen wählen. Diese Beispiele repräsentieren typische Gehälter für verschiedene Berufe in der Schweiz.</p>
+                </div>
+            
+                <div id="custom-salary-info" class="info-text">
+                    <p>Hier kannst du deinen eigenen Einstiegslohn und erwarteten Endlohn eingeben. Benutze den Lohnrechner auf lohnrechner.ch, um realistische Werte zu ermitteln.</p>
+                </div>
                                 
                 <div id="salary-info" class="salary-info hidden">
                     <h2>Anleitung zur Berechnung Einstieg und erwarteter Endlohn</h2>
@@ -329,20 +341,24 @@
         const customRadio = document.getElementById('custom-salary');
         const presetOptions = document.getElementById('preset-salary-options');
         const customInputs = document.getElementById('custom-salary-inputs');
-        const salaryInfo = document.getElementById('salary-info');
+        const presetInfo = document.getElementById('preset-salary-info');
+        const customInfo = document.getElementById('custom-salary-info');
 
         if (presetRadio.checked) {
             presetOptions.classList.remove('hidden');
             customInputs.classList.add('hidden');
-            salaryInfo.classList.remove('hidden');
+            presetInfo.style.display = 'block';
+            customInfo.style.display = 'none';
         } else if (customRadio.checked) {
             presetOptions.classList.add('hidden');
             customInputs.classList.remove('hidden');
-            salaryInfo.classList.remove('hidden');
+            presetInfo.style.display = 'none';
+            customInfo.style.display = 'block';
         } else {
             presetOptions.classList.add('hidden');
             customInputs.classList.add('hidden');
-            salaryInfo.classList.add('hidden');
+            presetInfo.style.display = 'none';
+            customInfo.style.display = 'none';
         }
     }
 
