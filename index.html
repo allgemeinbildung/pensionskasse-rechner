@@ -16,6 +16,8 @@
         .chart-container { width: 80%; margin: 20px auto; }
         fieldset { border: 1px solid #ccc; padding: 10px; margin-bottom: 15px; }
         .salary-info { margin-top: 10px; font-style: italic; color: #666; }
+        .hidden { display: none; }
+        .checkbox-group { margin-left: 20px; }
     </style>
 </head>
 <body>
@@ -36,7 +38,7 @@
                 <fieldset>
                     <legend>Wähle deine Lohndaten:</legend>
                     <div>
-                        <input type="radio" id="preset-salary" name="salary-type" value="preset" checked>
+                        <input type="radio" id="preset-salary" name="salary-type" value="preset">
                         <label for="preset-salary">Vorgegebene Beispiele</label>
                     </div>
                     <div>
@@ -45,23 +47,38 @@
                     </div>
                 </fieldset>
                 
-                <div class="salary-info">
+                <div id="salary-info" class="salary-info hidden">
                     Hier kommt ein erklärender Text zur Auswahl der Lohndaten. Dieser Text sollte dem Benutzer helfen zu verstehen, wie die Wahl der Lohndaten die Berechnungen beeinflusst.
                 </div>
                 
-                <div id="preset-salary-options">
-                    <label for="salary-preset">Wähle ein Beispiel:</label>
-                    <select id="salary-preset" name="salary-preset">
-                        <option value="example1">Beispiel 1: Kaufmann / Kauffrau (5100 - 7240 CHF)</option>
-                        <option value="example2">Beispiel 2: Informatiker / Informatikerin (5840 - 9530 CHF)</option>
-                        <option value="example3">Beispiel 3: Schreiner / Schreinerin (3800 - 7500 CHF)</option>
-                        <option value="example4">Beispiel 4: Krankenpfleger / Krankenpflegerin in (4200 - 8500 CHF)</option>
-                        <option value="example5">Beispiel 5: Lehrer / Lehrerin (5000 - 9500 CHF)</option>
-                        <option value="example6">Beispiel 6: Polymechaniker / Polymechanikerin (5490 - 8470 CHF)</option>                        
-                    </select>
+                <div id="preset-salary-options" class="hidden">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="example1" name="salary-preset" value="example1">
+                        <label for="example1">Beispiel 1: Kaufmann / Kauffrau (5100 - 7240 CHF)</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="example2" name="salary-preset" value="example2">
+                        <label for="example2">Beispiel 2: Informatiker / Informatikerin (5840 - 9530 CHF)</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="example3" name="salary-preset" value="example3">
+                        <label for="example3">Beispiel 3: Schreiner / Schreinerin (3800 - 7500 CHF)</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="example4" name="salary-preset" value="example4">
+                        <label for="example4">Beispiel 4: Krankenpfleger / Krankenpflegerin in (4200 - 8500 CHF)</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="example5" name="salary-preset" value="example5">
+                        <label for="example5">Beispiel 5: Lehrer / Lehrerin (5000 - 9500 CHF)</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="example6" name="salary-preset" value="example6">
+                        <label for="example6">Beispiel 6: Polymechaniker / Polymechanikerin (5490 - 8470 CHF)</label>
+                    </div>
                 </div>
                 
-                <div id="custom-salary-inputs" style="display: none;">
+                <div id="custom-salary-inputs" class="hidden">
                     <label for="start-salary">Einstiegslohn (CHF/Monat):</label>
                     <input type="number" id="start-salary" name="start-salary" min="2000">
                     
@@ -288,7 +305,34 @@
         updateCharts(age, retirementAge, startSalary, endSalary, totalSavings);
     }
 
-    // Update the event listener for form submission to remove age restrictions
+    // Function to show/hide salary options based on user selection
+    function toggleSalaryOptions() {
+        const presetRadio = document.getElementById('preset-salary');
+        const customRadio = document.getElementById('custom-salary');
+        const presetOptions = document.getElementById('preset-salary-options');
+        const customInputs = document.getElementById('custom-salary-inputs');
+        const salaryInfo = document.getElementById('salary-info');
+
+        if (presetRadio.checked) {
+            presetOptions.classList.remove('hidden');
+            customInputs.classList.add('hidden');
+            salaryInfo.classList.remove('hidden');
+        } else if (customRadio.checked) {
+            presetOptions.classList.add('hidden');
+            customInputs.classList.remove('hidden');
+            salaryInfo.classList.remove('hidden');
+        } else {
+            presetOptions.classList.add('hidden');
+            customInputs.classList.add('hidden');
+            salaryInfo.classList.add('hidden');
+        }
+    }
+
+    // Add event listeners for salary type selection
+    document.getElementById('preset-salary').addEventListener('change', toggleSalaryOptions);
+    document.getElementById('custom-salary').addEventListener('change', toggleSalaryOptions);
+
+    // Update the event listener for form submission
     document.getElementById('pension-form').addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -297,28 +341,31 @@
         let startSalary, endSalary;
 
         if (document.getElementById('preset-salary').checked) {
-            const preset = document.getElementById('salary-preset').value;
-            [startSalary, endSalary] = getPresetSalaries(preset);
-        } else {
+            const checkedExample = document.querySelector('input[name="salary-preset"]:checked');
+            if (checkedExample) {
+                [startSalary, endSalary] = getPresetSalaries(checkedExample.value);
+            } else {
+                alert('Bitte wählen Sie ein Beispiel aus.');
+                return;
+            }
+        } else if (document.getElementById('custom-salary').checked) {
             startSalary = parseInt(document.getElementById('start-salary').value);
             endSalary = parseInt(document.getElementById('end-salary').value);
+            if (isNaN(startSalary) || isNaN(endSalary)) {
+                alert('Bitte geben Sie gültige Werte für den Einstiegs- und Endlohn ein.');
+                return;
+            }
+        } else {
+            alert('Bitte wählen Sie eine Lohnoption aus.');
+            return;
         }
 
         const totalSavings = calculatePensionSavings(age, retirementAge, startSalary, endSalary);
         updateResults(totalSavings, age, retirementAge, startSalary, endSalary);
     });
 
-
-    // Event listeners for salary type selection
-    document.getElementById('preset-salary').addEventListener('change', function() {
-        document.getElementById('preset-salary-options').style.display = 'block';
-        document.getElementById('custom-salary-inputs').style.display = 'none';
-    });
-
-    document.getElementById('custom-salary').addEventListener('change', function() {
-        document.getElementById('preset-salary-options').style.display = 'none';
-        document.getElementById('custom-salary-inputs').style.display = 'block';
-    });
+    // Initialize the form
+    toggleSalaryOptions();
     </script>
 </body>
 </html>
