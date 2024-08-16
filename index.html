@@ -82,30 +82,6 @@
                 margin-bottom: 20px;
             }
         }
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #f9f9f9;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
-        }
-        .dropdown-content a {
-            color: black;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-        }
-        .dropdown-content a:hover {
-            background-color: #f1f1f1;
-        }
-        .show {
-            display: block;
-        }
     </style>
 </head>
 <body>
@@ -123,6 +99,17 @@
                 <label for="retirement-age">Geplantes Pensionsalter:</label>
                 <input type="number" id="retirement-age" name="retirement-age" required>
                 
+                <fieldset>
+                    <legend>Mein Lohn - Wähle deine Option</legend>
+                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                        <input type="radio" id="preset-salary" name="salary-type" value="preset" style="margin-right: 4px;">
+                        <label for="preset-salary">A. Vorgegebene Beispiele</label>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-top: 5px;">
+                        <input type="radio" id="custom-salary" name="salary-type" value="custom" style="margin-right: 4px;">
+                        <label for="custom-salary">B. Eigene Eingabe</label>
+                    </div>
+                </fieldset>
                 <div id="preset-salary-info" class="info-text">
                     <p>Hier kannst du aus vorgegebenen Beispielen wählen. Diese Beispiele repräsentieren typische Gehälter für verschiedene Berufe in der Schweiz.</p>
                 </div>
@@ -149,325 +136,365 @@
                     <h2>Erwarteter Endlohn</h2>
                     <p>Um den erwarteten Endlohn zum Zeitpunkt der Pensionierung zu berechnen, wiederholen Sie die Eingabe Ihrer persönlichen Daten, wie Alter, Dienstalter und weitere Angaben. Diese Daten können direkt im vorherigen Schritt angepasst und nochmals berechnet werden.</p>
                 </div>
-                               
-                <div class="dropdown">
-                    <button type="button" onclick="toggleDropdown()" class="dropbtn">Mein Lohn - Wähle deine Option</button>
-                    <div id="myDropdown" class="dropdown-content">
-                        <a href="#" onclick="selectOption('preset')">A. Vorgegebene Beispiele</a>
-                        <a href="#" onclick="selectOption('custom')">B. Eigene Eingabe</a>
-                        <div id="preset-examples" style="display: none;">
-                            <a href="#" onclick="selectExample('example1')">Kaufmann / Kauffrau (5100 - 7240 CHF)</a>
-                            <a href="#" onclick="selectExample('example2')">Informatiker / Informatikerin (5840 - 9530 CHF)</a>
-                            <a href="#" onclick="selectExample('example3')">Schreiner / Schreinerin (3800 - 7500 CHF)</a>
-                            <a href="#" onclick="selectExample('example4')">Krankenpfleger / Krankenpflegerin (4200 - 8500 CHF)</a>
-                            <a href="#" onclick="selectExample('example5')">Lehrer / Lehrerin (5000 - 9500 CHF)</a>
-                            <a href="#" onclick="selectExample('example6')">Polymechaniker / Polymechanikerin (5490 - 8470 CHF)</a>
-                        </div>
+                
+                <div id="preset-salary-options" class="hidden">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="example1" name="salary-preset" value="example1">
+                        <label for="example1">Beispiel 1: Kaufmann / Kauffrau (5100 - 7240 CHF)</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="example2" name="salary-preset" value="example2">
+                        <label for="example2">Beispiel 2: Informatiker / Informatikerin (5840 - 9530 CHF)</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="example3" name="salary-preset" value="example3">
+                        <label for="example3">Beispiel 3: Schreiner / Schreinerin (3800 - 7500 CHF)</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="example4" name="salary-preset" value="example4">
+                        <label for="example4">Beispiel 4: Krankenpfleger / Krankenpflegerin in (4200 - 8500 CHF)</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="example5" name="salary-preset" value="example5">
+                        <label for="example5">Beispiel 5: Lehrer / Lehrerin (5000 - 9500 CHF)</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="example6" name="salary-preset" value="example6">
+                        <label for="example6">Beispiel 6: Polymechaniker / Polymechanikerin (5490 - 8470 CHF)</label>
                     </div>
                 </div>
-            
-                <div id="custom-salary-inputs" style="display: none;">
+                
+                <div id="custom-salary-inputs" class="hidden">
                     <label for="start-salary">Einstiegslohn (CHF/Monat):</label>
                     <input type="number" id="start-salary" name="start-salary" min="2000">
                     
                     <label for="end-salary">Erwarteter Endlohn (CHF/Monat):</label>
                     <input type="number" id="end-salary" name="end-salary" min="2000">
                 </div>
-            
+                
                 <button type="submit">Berechnen</button>
             </form>
         </section>
-            
-            <section id="result-section" style="display: none;">
-                <h2>Deine Pensionskasse</h2>
-                <div class="charts-container">
-                    <div class="chart-container">
-                        <canvas id="salary-savings-chart"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="pension-comparison-chart"></canvas>
-                    </div>
-                </div>
-                <div class="results-container">
-                    <div id="summary">
-                        <h3>Zusammenfassung</h3>
-                        <p>Angespartes Kapital: <span id="total-capital"></span> CHF</p>
-                        <h4>Monatliche Rente:</h4>
-                        <ul>
-                            <li>Mit 6.8% Umwandlungssatz: <span id="monthly-pension-68"></span> CHF</li>
-                            <li>Mit 6.0% Umwandlungssatz: <span id="monthly-pension-60"></span> CHF</li>
-                        </ul>
-                        <h4>Jährliche Rente:</h4>
-                        <ul>
-                            <li>Mit 6.8% Umwandlungssatz: <span id="yearly-pension-68"></span> CHF</li>
-                            <li>Mit 6.0% Umwandlungssatz: <span id="yearly-pension-60"></span> CHF</li>
-                        </ul>
-                    </div>
-                    <div id="post-calculation-text">
-                        <h3>Interpretation deiner Ergebnisse</h3>
-                        <p>Basierend auf deinen Eingaben und den Berechnungen können wir folgende Schlüsse ziehen:</p>
-                        <ul>
-                            <li>Dein angespartes Kapital bei Renteneintritt beträgt <span id="result-capital"></span> CHF.</li>
-                            <li>Deine monatliche Rente wird zwischen <span id="result-pension-low"></span> CHF und <span id="result-pension-high"></span> CHF liegen, abhängig vom angewendeten Umwandlungssatz.</li>
-                            <li>Es ist wichtig zu beachten, dass diese Zahlen Schätzungen sind und von verschiedenen Faktoren beeinflusst werden können, wie z.B. Inflation, Lohnentwicklung und Änderungen in der Gesetzgebung.</li>
-                            <li>Um deine finanzielle Situation im Ruhestand zu verbessern, könntest du über zusätzliche private Altersvorsorge nachdenken oder deine Einzahlungen in die Pensionskasse erhöhen, falls möglich.</li>
-                        </ul>
-                        <p>Für eine detaillierte und persönliche Beratung empfehlen wir, einen Finanzberater oder deine Pensionskasse zu kontaktieren.</p>
-                    </div>
-                </div>
-            </section>
-            
-            <footer>
-                <p>© 2024 Pensionskassen-Rechner. Alle Angaben ohne Gewähr.</p>
-            </footer>
-            
-            <script>
-            // Constants
-            const INFLATION_RATE = 0.01; // 1% annual inflation
-            const BVG_RATES = {
-                '25-34': 0.07,
-                '35-44': 0.10,
-                '45-54': 0.15,
-                '55-64': 0.18
-            };
-            
-            let salaryChart, pensionChart;
-            
-            // Main calculation function
-            function calculatePensionSavings(startAge, retirementAge, startSalary, endSalary) {
-                let totalSavings = 0;
-                let currentSalary = startSalary;
-                const yearsWorking = retirementAge - startAge;
-                const annualSalaryIncrease = (endSalary - startSalary) / yearsWorking;
-            
-                for (let age = startAge; age < retirementAge; age++) {
-                    const bvgRate = getBVGRate(age);
-                    const yearlyContribution = currentSalary * bvgRate * 12; // 12 months
-                    totalSavings += yearlyContribution;
-            
-                    // Inflation adjustment and salary increase for the next year
-                    currentSalary = (currentSalary + annualSalaryIncrease) * (1 + INFLATION_RATE);
-                    totalSavings *= (1 + INFLATION_RATE); // Savings are also adjusted for inflation
-                }
-            
-                return totalSavings;
-            }
-            
-            // Helper function to determine BVG rate based on age
-            function getBVGRate(age) {
-                if (age < 25) return 0;
-                if (age >= 25 && age <= 34) return BVG_RATES['25-34'];
-                if (age >= 35 && age <= 44) return BVG_RATES['35-44'];
-                if (age >= 45 && age <= 54) return BVG_RATES['45-54'];
-                if (age >= 55) return BVG_RATES['55-64'];
-            }
-            
-            // Function to calculate monthly pension
-            function calculateMonthlyPension(totalSavings, conversionRate) {
-                const yearlyPension = totalSavings * conversionRate;
-                return yearlyPension / 12;
-            }
-            
-            // Function to update charts
-            function updateCharts(startAge, retirementAge, startSalary, endSalary, totalSavings) {
-                updateSalaryAndSavingsChart(startAge, retirementAge, startSalary, endSalary, totalSavings);
-                updatePensionComparisonChart(totalSavings);
-            }
-            
-            // Function to update salary and savings chart
-            function updateSalaryAndSavingsChart(startAge, retirementAge, startSalary, endSalary, totalSavings) {
-                const labels = [];
-                const salaryData = [];
-                const savingsData = [];
-                const yearsWorking = retirementAge - startAge;
-                const annualSalaryIncrease = (endSalary - startSalary) / yearsWorking;
-                let currentSalary = startSalary;
-                let currentSavings = 0;
-            
-                for (let age = startAge; age <= retirementAge; age++) {
-                    labels.push(age);
-                    salaryData.push(currentSalary * 12);  // Annual salary
-                    savingsData.push(currentSavings);
-            
-                    const bvgRate = getBVGRate(age);
-                    const yearlyContribution = currentSalary * bvgRate * 12;
-                    currentSavings += yearlyContribution;
-            
-                    currentSalary += annualSalaryIncrease;
-                    currentSalary *= (1 + INFLATION_RATE);
-                    currentSavings *= (1 + INFLATION_RATE);
-                }
-            
-                if (salaryChart) {
-                    salaryChart.destroy();
-                }
-            
-                salaryChart = new Chart(document.getElementById('salary-savings-chart'), {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Jahresgehalt',
-                            data: salaryData,
-                            borderColor: 'blue',
-                            fill: false
-                        }, {
-                            label: 'Angespartes Kapital',
-                            data: savingsData,
-                            borderColor: 'green',
-                            backgroundColor: 'rgba(0, 255, 0, 0.2)',
-                            fill: true
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: 'Alter'
-                                }
-                            },
-                            y: {
-                                title: {
-                                    display: true,
-                                    text: 'CHF'
-                                },
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-            }
-            
-            // Function to update pension comparison chart
-            function updatePensionComparisonChart(totalSavings) {
-                const monthlyPension68 = calculateMonthlyPension(totalSavings, 0.068);
-                const monthlyPension60 = calculateMonthlyPension(totalSavings, 0.060);
-            
-                if (pensionChart) {
-                    pensionChart.destroy();
-                }
-            
-                pensionChart = new Chart(document.getElementById('pension-comparison-chart'), {
-                    type: 'bar',
-                    data: {
-                        labels: ['Monatliche Rente', 'Jährliche Rente'],
-                        datasets: [{
-                            label: '6.8% Umwandlungssatz',
-                            data: [monthlyPension68, monthlyPension68 * 12],
-                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                            borderColor: 'rgb(255, 99, 132)',
-                            borderWidth: 1
-                        }, {
-                            label: '6.0% Umwandlungssatz',
-                            data: [monthlyPension60, monthlyPension60 * 12],
-                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                            borderColor: 'rgb(54, 162, 235)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'CHF'
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-            
-            // Function to get preset salaries
-            function getPresetSalaries(preset) {
-                const presets = {
-                    'example1': [5100, 7240],
-                    'example2': [5840, 9530],
-                    'example3': [3800, 7500],
-                    'example4': [4200, 8500],
-                    'example5': [5000, 9500],
-                    'example6': [5490, 8470]
-                };
-                return presets[preset];
-            }
-            
-            // Function to update results in the UI
-            function updateResults(totalSavings, age, retirementAge, startSalary, endSalary) {
-                document.getElementById('total-capital').textContent = totalSavings.toFixed(2);
-                const monthlyPension68 = calculateMonthlyPension(totalSavings, 0.068);
-                const monthlyPension60 = calculateMonthlyPension(totalSavings, 0.060);
-                document.getElementById('monthly-pension-68').textContent = monthlyPension68.toFixed(2);
-                document.getElementById('monthly-pension-60').textContent = monthlyPension60.toFixed(2);
-                document.getElementById('yearly-pension-68').textContent = (monthlyPension68 * 12).toFixed(2);
-                document.getElementById('yearly-pension-60').textContent = (monthlyPension60 * 12).toFixed(2);
-            
-                document.getElementById('result-capital').textContent = totalSavings.toFixed(2);
-                document.getElementById('result-pension-low').textContent = monthlyPension60.toFixed(2);
-                document.getElementById('result-pension-high').textContent = monthlyPension68.toFixed(2);
-            
-                document.getElementById('result-section').style.display = 'block';
-                updateCharts(age, retirementAge, startSalary, endSalary, totalSavings);
-            }
-            
-            function toggleDropdown() {
-                document.getElementById("myDropdown").classList.toggle("show");
-            }
-            
-            function selectOption(option) {
-                if (option === 'preset') {
-                    document.getElementById('preset-examples').style.display = 'block';
-                    document.getElementById('custom-salary-inputs').style.display = 'none';
-                } else if (option === 'custom') {
-                    document.getElementById('preset-examples').style.display = 'none';
-                    document.getElementById('custom-salary-inputs').style.display = 'block';
-                }
-                document.getElementById("myDropdown").classList.remove("show");
-            }
         
-            function selectExample(example) {
-                const [startSalary, endSalary] = getPresetSalaries(example);
-                document.getElementById('start-salary').value = startSalary;
-                document.getElementById('end-salary').value = endSalary;
-                document.getElementById('custom-salary-inputs').style.display = 'block';
-                document.getElementById("myDropdown").classList.remove("show");
+        <section id="result-section" style="display: none;">
+            <h2>Deine Pensionskasse</h2>
+            <div class="charts-container">
+                <div class="chart-container">
+                    <canvas id="salary-savings-chart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="pension-comparison-chart"></canvas>
+                </div>
+            </div>
+            <div class="results-container">
+                <div id="summary">
+                    <h3>Zusammenfassung</h3>
+                    <p>Angespartes Kapital: <span id="total-capital"></span> CHF</p>
+                    <h4>Monatliche Rente:</h4>
+                    <ul>
+                        <li>Mit 6.8% Umwandlungssatz: <span id="monthly-pension-68"></span> CHF</li>
+                        <li>Mit 6.0% Umwandlungssatz: <span id="monthly-pension-60"></span> CHF</li>
+                    </ul>
+                    <h4>Jährliche Rente:</h4>
+                    <ul>
+                        <li>Mit 6.8% Umwandlungssatz: <span id="yearly-pension-68"></span> CHF</li>
+                        <li>Mit 6.0% Umwandlungssatz: <span id="yearly-pension-60"></span> CHF</li>
+                    </ul>
+                </div>
+                <div id="post-calculation-text">
+                    <h3>Interpretation deiner Ergebnisse</h3>
+                    <p>Basierend auf deinen Eingaben und den Berechnungen können wir folgende Schlüsse ziehen:</p>
+                    <ul>
+                        <li>Dein angespartes Kapital bei Renteneintritt beträgt <span id="result-capital"></span> CHF.</li>
+                        <li>Deine monatliche Rente wird zwischen <span id="result-pension-low"></span> CHF und <span id="result-pension-high"></span> CHF liegen, abhängig vom angewendeten Umwandlungssatz.</li>
+                        <li>Es ist wichtig zu beachten, dass diese Zahlen Schätzungen sind und von verschiedenen Faktoren beeinflusst werden können, wie z.B. Inflation, Lohnentwicklung und Änderungen in der Gesetzgebung.</li>
+                        <li>Um deine finanzielle Situation im Ruhestand zu verbessern, könntest du über zusätzliche private Altersvorsorge nachdenken oder deine Einzahlungen in die Pensionskasse erhöhen, falls möglich.</li>
+                    </ul>
+                    <p>Für eine detaillierte und persönliche Beratung empfehlen wir, einen Finanzberater oder deine Pensionskasse zu kontaktieren.</p>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="post-calculation-text">
+            <h3>Interpretation deiner Ergebnisse</h3>
+            <p>Basierend auf deinen Eingaben und den Berechnungen können wir folgende Schlüsse ziehen:</p>
+            <ul>
+                <li>Dein angespartes Kapital bei Renteneintritt beträgt <span id="result-capital"></span> CHF.</li>
+                <li>Deine monatliche Rente wird zwischen <span id="result-pension-low"></span> CHF und <span id="result-pension-high"></span> CHF liegen, abhängig vom angewendeten Umwandlungssatz.</li>
+                <li>Es ist wichtig zu beachten, dass diese Zahlen Schätzungen sind und von verschiedenen Faktoren beeinflusst werden können, wie z.B. Inflation, Lohnentwicklung und Änderungen in der Gesetzgebung.</li>
+                <li>Um deine finanzielle Situation im Ruhestand zu verbessern, könntest du über zusätzliche private Altersvorsorge nachdenken oder deine Einzahlungen in die Pensionskasse erhöhen, falls möglich.</li>
+            </ul>
+            <p>Für eine detaillierte und persönliche Beratung empfehlen wir, einen Finanzberater oder deine Pensionskasse zu kontaktieren.</p>
+        </section>
+    </main>
+    
+    <footer>
+        <p>© 2024 Pensionskassen-Rechner. Alle Angaben ohne Gewähr.</p>
+    </footer>
+
+    <script>
+    // Constants
+    const INFLATION_RATE = 0.01; // 1% annual inflation
+    const BVG_RATES = {
+        '25-34': 0.07,
+        '35-44': 0.10,
+        '45-54': 0.15,
+        '55-64': 0.18
+    };
+
+    let salaryChart, pensionChart;
+
+    // Main calculation function
+    function calculatePensionSavings(startAge, retirementAge, startSalary, endSalary) {
+        let totalSavings = 0;
+        let currentSalary = startSalary;
+        const yearsWorking = retirementAge - startAge;
+        const annualSalaryIncrease = (endSalary - startSalary) / yearsWorking;
+
+        for (let age = startAge; age < retirementAge; age++) {
+            const bvgRate = getBVGRate(age);
+            const yearlyContribution = currentSalary * bvgRate * 12; // 12 months
+            totalSavings += yearlyContribution;
+
+            // Inflation adjustment and salary increase for the next year
+            currentSalary = (currentSalary + annualSalaryIncrease) * (1 + INFLATION_RATE);
+            totalSavings *= (1 + INFLATION_RATE); // Savings are also adjusted for inflation
+        }
+
+        return totalSavings;
+    }
+
+    // Helper function to determine BVG rate based on age
+    function getBVGRate(age) {
+        if (age < 25) return 0;
+        if (age >= 25 && age <= 34) return BVG_RATES['25-34'];
+        if (age >= 35 && age <= 44) return BVG_RATES['35-44'];
+        if (age >= 45 && age <= 54) return BVG_RATES['45-54'];
+        if (age >= 55) return BVG_RATES['55-64'];
+    }
+
+    // Function to calculate monthly pension
+    function calculateMonthlyPension(totalSavings, conversionRate) {
+        const yearlyPension = totalSavings * conversionRate;
+        return yearlyPension / 12;
+    }
+
+    // Function to update charts
+    function updateCharts(startAge, retirementAge, startSalary, endSalary, totalSavings) {
+        updateSalaryAndSavingsChart(startAge, retirementAge, startSalary, endSalary, totalSavings);
+        updatePensionComparisonChart(totalSavings);
+    }
+
+    // Function to update salary and savings chart
+    function updateSalaryAndSavingsChart(startAge, retirementAge, startSalary, endSalary, totalSavings) {
+        const labels = [];
+        const salaryData = [];
+        const savingsData = [];
+        const yearsWorking = retirementAge - startAge;
+        const annualSalaryIncrease = (endSalary - startSalary) / yearsWorking;
+        let currentSalary = startSalary;
+        let currentSavings = 0;
+
+        for (let age = startAge; age <= retirementAge; age++) {
+            labels.push(age);
+            salaryData.push(currentSalary * 12);  // Annual salary
+            savingsData.push(currentSavings);
+
+            const bvgRate = getBVGRate(age);
+            const yearlyContribution = currentSalary * bvgRate * 12;
+            currentSavings += yearlyContribution;
+
+            currentSalary += annualSalaryIncrease;
+            currentSalary *= (1 + INFLATION_RATE);
+            currentSavings *= (1 + INFLATION_RATE);
+        }
+
+        if (salaryChart) {
+            salaryChart.destroy();
+        }
+
+        salaryChart = new Chart(document.getElementById('salary-savings-chart'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Jahresgehalt',
+                    data: salaryData,
+                    borderColor: 'blue',
+                    fill: false
+                }, {
+                    label: 'Angespartes Kapital',
+                    data: savingsData,
+                    borderColor: 'green',
+                    backgroundColor: 'rgba(0, 255, 0, 0.2)',
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                mantainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Alter'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'CHF'
+                        },
+                        beginAtZero: true
+                    }
+                }
             }
-            
-            // Close the dropdown if the user clicks outside of it
-            window.onclick = function(event) {
-                if (!event.target.matches('.dropbtn')) {
-                    var dropdowns = document.getElementsByClassName("dropdown-content");
-                    for (var i = 0; i < dropdowns.length; i++) {
-                        var openDropdown = dropdowns[i];
-                        if (openDropdown.classList.contains('show')) {
-                            openDropdown.classList.remove('show');
+        });
+    }
+
+    // Function to update pension comparison chart
+    function updatePensionComparisonChart(totalSavings) {
+        const monthlyPension68 = calculateMonthlyPension(totalSavings, 0.068);
+        const monthlyPension60 = calculateMonthlyPension(totalSavings, 0.060);
+
+        if (pensionChart) {
+            pensionChart.destroy();
+        }
+
+        pensionChart = new Chart(document.getElementById('pension-comparison-chart'), {
+            type: 'bar',
+            data: {
+                labels: ['Monatliche Rente', 'Jährliche Rente'],
+                datasets: [{
+                    label: '6.8% Umwandlungssatz',
+                    data: [monthlyPension68, monthlyPension68 * 12],
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    borderWidth: 1
+                }, {
+                    label: '6.0% Umwandlungssatz',
+                    data: [monthlyPension60, monthlyPension60 * 12],
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgb(54, 162, 235)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRation: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'CHF'
                         }
                     }
                 }
             }
-            
-            // Event listener for form submission
-            document.getElementById('pension-form').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const age = parseInt(document.getElementById('age').value);
-                const retirementAge = parseInt(document.getElementById('retirement-age').value);
-                const startSalary = parseInt(document.getElementById('start-salary').value);
-                const endSalary = parseInt(document.getElementById('end-salary').value);
-            
-                if (isNaN(age) || isNaN(retirementAge) || isNaN(startSalary) || isNaN(endSalary)) {
-                    alert('Bitte geben Sie gültige Werte für alle Felder ein.');
-                    return;
-                }
-            
-                const totalSavings = calculatePensionSavings(age, retirementAge, startSalary, endSalary);
-                updateResults(totalSavings, age, retirementAge, startSalary, endSalary);
-            });
-            </script>
-            </body>
-            </html>
+        });
+    }
+
+    // Function to get preset salaries
+    function getPresetSalaries(preset) {
+        const presets = {
+            'example1': [5100, 7240],
+            'example2': [5840, 9530],
+            'example3': [3800, 7500],
+            'example4': [4200, 8500],
+            'example5': [5000, 9500],
+            'example6': [5490, 8470]
+        };
+        return presets[preset];
+    }
+
+    // Function to update results in the UI
+    function updateResults(totalSavings, age, retirementAge, startSalary, endSalary) {
+        document.getElementById('total-capital').textContent = totalSavings.toFixed(2);
+        const monthlyPension68 = calculateMonthlyPension(totalSavings, 0.068);
+        const monthlyPension60 = calculateMonthlyPension(totalSavings, 0.060);
+        document.getElementById('monthly-pension-68').textContent = monthlyPension68.toFixed(2);
+        document.getElementById('monthly-pension-60').textContent = monthlyPension60.toFixed(2);
+        document.getElementById('yearly-pension-68').textContent = (monthlyPension68 * 12).toFixed(2);
+        document.getElementById('yearly-pension-60').textContent = (monthlyPension60 * 12).toFixed(2);
+
+        document.getElementById('result-section').style.display = 'block';
+        updateCharts(age, retirementAge, startSalary, endSalary, totalSavings);
+
+        // Update and show post-calculation text
+        document.getElementById('result-capital').textContent = totalSavings.toFixed(2);
+        document.getElementById('result-pension-low').textContent = monthlyPension60.toFixed(2);
+        document.getElementById('result-pension-high').textContent = monthlyPension68.toFixed(2);
+        document.getElementById('post-calculation-text').style.display = 'block';
+    }
+
+
+    // Function to show/hide salary options based on user selection
+    function toggleSalaryOptions() {
+        const presetRadio = document.getElementById('preset-salary');
+        const customRadio = document.getElementById('custom-salary');
+        const presetOptions = document.getElementById('preset-salary-options');
+        const customInputs = document.getElementById('custom-salary-inputs');
+        const presetInfo = document.getElementById('preset-salary-info');
+        const customInfo = document.getElementById('custom-salary-info');
+
+        if (presetRadio.checked) {
+            presetOptions.classList.remove('hidden');
+            customInputs.classList.add('hidden');
+            presetInfo.style.display = 'block';
+            customInfo.style.display = 'none';
+        } else if (customRadio.checked) {
+            presetOptions.classList.add('hidden');
+            customInputs.classList.remove('hidden');
+            presetInfo.style.display = 'none';
+            customInfo.style.display = 'block';
+        } else {
+            presetOptions.classList.add('hidden');
+            customInputs.classList.add('hidden');
+            presetInfo.style.display = 'none';
+            customInfo.style.display = 'none';
+        }
+    }
+
+    // Add event listeners for salary type selection
+    document.getElementById('preset-salary').addEventListener('change', toggleSalaryOptions);
+    document.getElementById('custom-salary').addEventListener('change', toggleSalaryOptions);
+
+    // Update the event listener for form submission
+    document.getElementById('pension-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const age = parseInt(document.getElementById('age').value);
+        const retirementAge = parseInt(document.getElementById('retirement-age').value);
+        let startSalary, endSalary;
+
+        if (document.getElementById('preset-salary').checked) {
+            const checkedExample = document.querySelector('input[name="salary-preset"]:checked');
+            if (checkedExample) {
+                [startSalary, endSalary] = getPresetSalaries(checkedExample.value);
+            } else {
+                alert('Bitte wählen Sie ein Beispiel aus.');
+                return;
+            }
+        } else if (document.getElementById('custom-salary').checked) {
+            startSalary = parseInt(document.getElementById('start-salary').value);
+            endSalary = parseInt(document.getElementById('end-salary').value);
+            if (isNaN(startSalary) || isNaN(endSalary)) {
+                alert('Bitte geben Sie gültige Werte für den Einstiegs- und Endlohn ein.');
+                return;
+            }
+        } else {
+            alert('Bitte wählen Sie eine Lohnoption aus.');
+            return;
+        }
+
+        const totalSavings = calculatePensionSavings(age, retirementAge, startSalary, endSalary);
+        updateResults(totalSavings, age, retirementAge, startSalary, endSalary);
+    });
+
+    // Initialize the form
+    toggleSalaryOptions();
+    </script>
+</body>
+</html>
