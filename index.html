@@ -18,6 +18,18 @@
         .salary-info { margin-top: 10px; font-style: italic; color: #666; }
         .hidden { display: none; }
         .checkbox-group { margin-left: 20px; }
+    
+        /* Added CSS for checkboxes and labels alignment */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px; /* Adjust the space between each group as needed */
+        }
+    
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 10px; /* Adjust the space between the checkbox and the label */
+        }
+    
         .info-text {
             display: none;
             margin-top: 10px;
@@ -50,7 +62,8 @@
                 width: 100%;
                 margin-bottom: 20px;
             }
-        }        .charts-container {
+        }        
+        .charts-container {
             display: flex;
             justify-content: space-between;
             margin-bottom: 20px;
@@ -163,6 +176,7 @@
                         <label for="example6">Beispiel 6: Polymechaniker / Polymechanikerin (5490 - 8470 CHF)</label>
                     </div>
                 </div>
+
                 
                 <div id="custom-salary-inputs" class="hidden">
                     <label for="start-salary">Einstiegslohn (CHF/Monat):</label>
