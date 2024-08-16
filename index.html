@@ -50,6 +50,37 @@
                 width: 100%;
                 margin-bottom: 20px;
             }
+        }        .charts-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .chart-container {
+            width: 48%;
+            height: 400px; /* Adjust this value as needed */
+        }
+        .results-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        #summary, #post-calculation-text {
+            width: 48%;
+        }
+        #post-calculation-text {
+            background-color: #e6f7ff;
+            border: 1px solid #91d5ff;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        @media (max-width: 768px) {
+            .charts-container, .results-container {
+                flex-direction: column;
+            }
+            .chart-container, #summary, #post-calculation-text {
+                width: 100%;
+                margin-bottom: 20px;
+            }
         }
     </style>
 </head>
@@ -155,19 +186,32 @@
                     <canvas id="pension-comparison-chart"></canvas>
                 </div>
             </div>
-            <div id="summary">
-                <h3>Zusammenfassung</h3>
-                <p>Angespartes Kapital: <span id="total-capital"></span> CHF</p>
-                <h4>Monatliche Rente:</h4>
-                <ul>
-                    <li>Mit 6.8% Umwandlungssatz: <span id="monthly-pension-68"></span> CHF</li>
-                    <li>Mit 6.0% Umwandlungssatz: <span id="monthly-pension-60"></span> CHF</li>
-                </ul>
-                <h4>Jährliche Rente:</h4>
-                <ul>
-                    <li>Mit 6.8% Umwandlungssatz: <span id="yearly-pension-68"></span> CHF</li>
-                    <li>Mit 6.0% Umwandlungssatz: <span id="yearly-pension-60"></span> CHF</li>
-                </ul>
+            <div class="results-container">
+                <div id="summary">
+                    <h3>Zusammenfassung</h3>
+                    <p>Angespartes Kapital: <span id="total-capital"></span> CHF</p>
+                    <h4>Monatliche Rente:</h4>
+                    <ul>
+                        <li>Mit 6.8% Umwandlungssatz: <span id="monthly-pension-68"></span> CHF</li>
+                        <li>Mit 6.0% Umwandlungssatz: <span id="monthly-pension-60"></span> CHF</li>
+                    </ul>
+                    <h4>Jährliche Rente:</h4>
+                    <ul>
+                        <li>Mit 6.8% Umwandlungssatz: <span id="yearly-pension-68"></span> CHF</li>
+                        <li>Mit 6.0% Umwandlungssatz: <span id="yearly-pension-60"></span> CHF</li>
+                    </ul>
+                </div>
+                <div id="post-calculation-text">
+                    <h3>Interpretation deiner Ergebnisse</h3>
+                    <p>Basierend auf deinen Eingaben und den Berechnungen können wir folgende Schlüsse ziehen:</p>
+                    <ul>
+                        <li>Dein angespartes Kapital bei Renteneintritt beträgt <span id="result-capital"></span> CHF.</li>
+                        <li>Deine monatliche Rente wird zwischen <span id="result-pension-low"></span> CHF und <span id="result-pension-high"></span> CHF liegen, abhängig vom angewendeten Umwandlungssatz.</li>
+                        <li>Es ist wichtig zu beachten, dass diese Zahlen Schätzungen sind und von verschiedenen Faktoren beeinflusst werden können, wie z.B. Inflation, Lohnentwicklung und Änderungen in der Gesetzgebung.</li>
+                        <li>Um deine finanzielle Situation im Ruhestand zu verbessern, könntest du über zusätzliche private Altersvorsorge nachdenken oder deine Einzahlungen in die Pensionskasse erhöhen, falls möglich.</li>
+                    </ul>
+                    <p>Für eine detaillierte und persönliche Beratung empfehlen wir, einen Finanzberater oder deine Pensionskasse zu kontaktieren.</p>
+                </div>
             </div>
         </section>
 
