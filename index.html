@@ -14,6 +14,8 @@
         button { background-color: #4CAF50; border: none; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; }
         #result-section { background-color: #f2f2f2; padding: 20px; border-radius: 5px; }
         .chart-container { width: 80%; margin: 20px auto; }
+        fieldset { border: 1px solid #ccc; padding: 10px; margin-bottom: 15px; }
+        .salary-info { margin-top: 10px; font-style: italic; color: #666; }
     </style>
 </head>
 <body>
@@ -26,19 +28,26 @@
             <h2>Deine Daten</h2>
             <form id="pension-form">
                 <label for="age">Dein Alter:</label>
-                <input type="number" id="age" name="age" min="15" max="20" required>
+                <input type="number" id="age" name="age" required>
                 
                 <label for="retirement-age">Geplantes Pensionsalter:</label>
-                <input type="number" id="retirement-age" name="retirement-age" min="58" max="70" required>
+                <input type="number" id="retirement-age" name="retirement-age" required>
                 
                 <fieldset>
                     <legend>Wähle deine Lohndaten:</legend>
-                    <input type="radio" id="preset-salary" name="salary-type" value="preset" checked>
-                    <label for="preset-salary">Vorgegebene Beispiele</label>
-                    
-                    <input type="radio" id="custom-salary" name="salary-type" value="custom">
-                    <label for="custom-salary">Eigene Eingabe</label>
+                    <div>
+                        <input type="radio" id="preset-salary" name="salary-type" value="preset" checked>
+                        <label for="preset-salary">Vorgegebene Beispiele</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="custom-salary" name="salary-type" value="custom">
+                        <label for="custom-salary">Eigene Eingabe</label>
+                    </div>
                 </fieldset>
+                
+                <div class="salary-info">
+                    Hier kommt ein erklärender Text zur Auswahl der Lohndaten. Dieser Text sollte dem Benutzer helfen zu verstehen, wie die Wahl der Lohndaten die Berechnungen beeinflusst.
+                </div>
                 
                 <div id="preset-salary-options">
                     <label for="salary-preset">Wähle ein Beispiel:</label>
@@ -54,10 +63,10 @@
                 
                 <div id="custom-salary-inputs" style="display: none;">
                     <label for="start-salary">Einstiegslohn (CHF/Monat):</label>
-                    <input type="number" id="start-salary" name="start-salary" min="2000" max="10000">
+                    <input type="number" id="start-salary" name="start-salary" min="2000">
                     
                     <label for="end-salary">Erwarteter Endlohn (CHF/Monat):</label>
-                    <input type="number" id="end-salary" name="end-salary" min="2000" max="20000">
+                    <input type="number" id="end-salary" name="end-salary" min="2000">
                 </div>
                 
                 <button type="submit">Berechnen</button>
@@ -279,7 +288,7 @@
         updateCharts(age, retirementAge, startSalary, endSalary, totalSavings);
     }
 
-    // Event listener for form submission
+    // Update the event listener for form submission to remove age restrictions
     document.getElementById('pension-form').addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -298,6 +307,7 @@
         const totalSavings = calculatePensionSavings(age, retirementAge, startSalary, endSalary);
         updateResults(totalSavings, age, retirementAge, startSalary, endSalary);
     });
+
 
     // Event listeners for salary type selection
     document.getElementById('preset-salary').addEventListener('change', function() {
