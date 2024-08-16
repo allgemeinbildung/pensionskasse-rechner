@@ -151,7 +151,7 @@
                 </div>
                                
                 <div class="dropdown">
-                    <button onclick="toggleDropdown()" class="dropbtn">Mein Lohn - Wähle deine Option</button>
+                    <button type="button" onclick="toggleDropdown()" class="dropbtn">Mein Lohn - Wähle deine Option</button>
                     <div id="myDropdown" class="dropdown-content">
                         <a href="#" onclick="selectOption('preset')">A. Vorgegebene Beispiele</a>
                         <a href="#" onclick="selectOption('custom')">B. Eigene Eingabe</a>
@@ -176,7 +176,7 @@
             
                 <button type="submit">Berechnen</button>
             </form>
-            </section>
+        </section>
             
             <section id="result-section" style="display: none;">
                 <h2>Deine Pensionskasse</h2>
@@ -427,13 +427,15 @@
                     document.getElementById('preset-examples').style.display = 'none';
                     document.getElementById('custom-salary-inputs').style.display = 'block';
                 }
+                document.getElementById("myDropdown").classList.remove("show");
             }
-            
+        
             function selectExample(example) {
                 const [startSalary, endSalary] = getPresetSalaries(example);
                 document.getElementById('start-salary').value = startSalary;
                 document.getElementById('end-salary').value = endSalary;
                 document.getElementById('custom-salary-inputs').style.display = 'block';
+                document.getElementById("myDropdown").classList.remove("show");
             }
             
             // Close the dropdown if the user clicks outside of it
