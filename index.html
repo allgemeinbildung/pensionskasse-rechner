@@ -34,6 +34,23 @@
             border: 1px solid #91d5ff;
             border-radius: 5px;
         }
+        .charts-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .chart-container {
+            width: 45%; /* Slightly less than 50% to account for spacing */
+        }
+        @media (max-width: 768px) {
+            .charts-container {
+                flex-direction: column;
+            }
+            .chart-container {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -130,11 +147,13 @@
         
         <section id="result-section" style="display: none;">
             <h2>Deine Pensionskasse</h2>
-            <div class="chart-container">
-                <canvas id="salary-savings-chart"></canvas>
-            </div>
-            <div class="chart-container">
-                <canvas id="pension-comparison-chart"></canvas>
+            <div class="charts-container">
+                <div class="chart-container">
+                    <canvas id="salary-savings-chart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="pension-comparison-chart"></canvas>
+                </div>
             </div>
             <div id="summary">
                 <h3>Zusammenfassung</h3>
@@ -151,6 +170,7 @@
                 </ul>
             </div>
         </section>
+
 
         <section id="post-calculation-text">
             <h3>Interpretation deiner Ergebnisse</h3>
@@ -269,6 +289,7 @@
             },
             options: {
                 responsive: true,
+                mantainAspectRatio: false,
                 scales: {
                     x: {
                         title: {
@@ -317,6 +338,7 @@
             },
             options: {
                 responsive: true,
+                maintainAspectRation: false,
                 scales: {
                     y: {
                         beginAtZero: true,
