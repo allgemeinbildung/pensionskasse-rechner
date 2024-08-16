@@ -123,17 +123,6 @@
                 <label for="retirement-age">Geplantes Pensionsalter:</label>
                 <input type="number" id="retirement-age" name="retirement-age" required>
                 
-                <fieldset>
-                    <legend>Mein Lohn - Wähle deine Option</legend>
-                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
-                        <input type="radio" id="preset-salary" name="salary-type" value="preset" style="margin-right: 4px;">
-                        <label for="preset-salary">A. Vorgegebene Beispiele</label>
-                    </div>
-                    <div style="display: flex; align-items: center; margin-top: 5px;">
-                        <input type="radio" id="custom-salary" name="salary-type" value="custom" style="margin-right: 4px;">
-                        <label for="custom-salary">B. Eigene Eingabe</label>
-                    </div>
-                </fieldset>
                 <div id="preset-salary-info" class="info-text">
                     <p>Hier kannst du aus vorgegebenen Beispielen wählen. Diese Beispiele repräsentieren typische Gehälter für verschiedene Berufe in der Schweiz.</p>
                 </div>
@@ -160,34 +149,7 @@
                     <h2>Erwarteter Endlohn</h2>
                     <p>Um den erwarteten Endlohn zum Zeitpunkt der Pensionierung zu berechnen, wiederholen Sie die Eingabe Ihrer persönlichen Daten, wie Alter, Dienstalter und weitere Angaben. Diese Daten können direkt im vorherigen Schritt angepasst und nochmals berechnet werden.</p>
                 </div>
-                
-                <div id="preset-salary-options" class="hidden">
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="example1" name="salary-preset" value="example1">
-                        <label for="example1">Beispiel 1: Kaufmann / Kauffrau (5100 - 7240 CHF)</label>
-                    </div>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="example2" name="salary-preset" value="example2">
-                        <label for="example2">Beispiel 2: Informatiker / Informatikerin (5840 - 9530 CHF)</label>
-                    </div>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="example3" name="salary-preset" value="example3">
-                        <label for="example3">Beispiel 3: Schreiner / Schreinerin (3800 - 7500 CHF)</label>
-                    </div>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="example4" name="salary-preset" value="example4">
-                        <label for="example4">Beispiel 4: Krankenpfleger / Krankenpflegerin in (4200 - 8500 CHF)</label>
-                    </div>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="example5" name="salary-preset" value="example5">
-                        <label for="example5">Beispiel 5: Lehrer / Lehrerin (5000 - 9500 CHF)</label>
-                    </div>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="example6" name="salary-preset" value="example6">
-                        <label for="example6">Beispiel 6: Polymechaniker / Polymechanikerin (5490 - 8470 CHF)</label>
-                    </div>
-                </div>
-                
+                               
                 <div class="dropdown">
                     <button onclick="toggleDropdown()" class="dropbtn">Mein Lohn - Wähle deine Option</button>
                     <div id="myDropdown" class="dropdown-content">
