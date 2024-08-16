@@ -36,19 +36,34 @@
                 <input type="number" id="retirement-age" name="retirement-age" required>
                 
                 <fieldset>
-                    <legend>Wähle deine Lohndaten:</legend>
+                    <legend>Mein Lohn</legend>
                     <div>
                         <input type="radio" id="preset-salary" name="salary-type" value="preset">
-                        <label for="preset-salary">Vorgegebene Beispiele</label>
+                        <label for="preset-salary">A. Vorgegebene Beispiele 👆</label>
                     </div>
                     <div>
                         <input type="radio" id="custom-salary" name="salary-type" value="custom">
-                        <label for="custom-salary">Eigene Eingabe</label>
+                        <label for="custom-salary">B. Eigene Eingabe 👆</label>
                     </div>
                 </fieldset>
-                
+                                
                 <div id="salary-info" class="salary-info hidden">
-                    Hier kommt ein erklärender Text zur Auswahl der Lohndaten. Dieser Text sollte dem Benutzer helfen zu verstehen, wie die Wahl der Lohndaten die Berechnungen beeinflusst.
+                    <h2>Anleitung zur Berechnung Einstieg und erwarteter Endlohn</h2>
+                    <p><strong>Beruf suchen und auswählen:</strong></p>
+                    <p>Besuchen Sie die Webseite <a href="https://www.lohnrechner.ch" target="_blank">lohnrechner.ch</a>.</p>
+                    <p>Geben Sie im Suchfeld Ihren gewünschten Beruf ein und klicken Sie auf "Weiter".</p>
+                
+                    <p><strong>Branche auswählen:</strong></p>
+                    <p>Wählen Sie die passende Branche aus der Liste aus. Falls Sie keine exakte Übereinstimmung finden, wählen Sie einfach die am besten passende Option.</p>
+                
+                    <p><strong>Persönliche Angaben eintragen:</strong></p>
+                    <p>Geben Sie Ihre relevanten Daten wie Alter, Dienstalter, Ausbildung, Kanton und Arbeitsstunden pro Woche ein. Klicken Sie dann auf "Lohn berechnen".</p>
+                
+                    <p><strong>Mittleren Lohn auswählen:</strong></p>
+                    <p>Notieren Sie den mittleren Lohn, der Ihnen angezeigt wird.</p>
+                
+                    <h2>Erwarteter Endlohn</h2>
+                    <p>Um den erwarteten Endlohn zum Zeitpunkt der Pensionierung zu berechnen, wiederholen Sie die Eingabe Ihrer persönlichen Daten, wie Alter, Dienstalter und weitere Angaben. Diese Daten können direkt im vorherigen Schritt angepasst und nochmals berechnet werden.</p>
                 </div>
                 
                 <div id="preset-salary-options" class="hidden">
