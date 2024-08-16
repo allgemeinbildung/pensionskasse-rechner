@@ -26,6 +26,14 @@
             border: 1px solid #ccc;
             border-radius: 5px;
         }
+        #post-calculation-text {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e6f7ff;
+            border: 1px solid #91d5ff;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -142,6 +150,18 @@
                     <li>Mit 6.0% Umwandlungssatz: <span id="yearly-pension-60"></span> CHF</li>
                 </ul>
             </div>
+        </section>
+
+        <section id="post-calculation-text">
+            <h3>Interpretation deiner Ergebnisse</h3>
+            <p>Basierend auf deinen Eingaben und den Berechnungen können wir folgende Schlüsse ziehen:</p>
+            <ul>
+                <li>Dein angespartes Kapital bei Renteneintritt beträgt <span id="result-capital"></span> CHF.</li>
+                <li>Deine monatliche Rente wird zwischen <span id="result-pension-low"></span> CHF und <span id="result-pension-high"></span> CHF liegen, abhängig vom angewendeten Umwandlungssatz.</li>
+                <li>Es ist wichtig zu beachten, dass diese Zahlen Schätzungen sind und von verschiedenen Faktoren beeinflusst werden können, wie z.B. Inflation, Lohnentwicklung und Änderungen in der Gesetzgebung.</li>
+                <li>Um deine finanzielle Situation im Ruhestand zu verbessern, könntest du über zusätzliche private Altersvorsorge nachdenken oder deine Einzahlungen in die Pensionskasse erhöhen, falls möglich.</li>
+            </ul>
+            <p>Für eine detaillierte und persönliche Beratung empfehlen wir, einen Finanzberater oder deine Pensionskasse zu kontaktieren.</p>
         </section>
     </main>
     
@@ -326,14 +346,23 @@
     // Function to update results in the UI
     function updateResults(totalSavings, age, retirementAge, startSalary, endSalary) {
         document.getElementById('total-capital').textContent = totalSavings.toFixed(2);
-        document.getElementById('monthly-pension-68').textContent = calculateMonthlyPension(totalSavings, 0.068).toFixed(2);
-        document.getElementById('monthly-pension-60').textContent = calculateMonthlyPension(totalSavings, 0.060).toFixed(2);
-        document.getElementById('yearly-pension-68').textContent = (calculateMonthlyPension(totalSavings, 0.068) * 12).toFixed(2);
-        document.getElementById('yearly-pension-60').textContent = (calculateMonthlyPension(totalSavings, 0.060) * 12).toFixed(2);
+        const monthlyPension68 = calculateMonthlyPension(totalSavings, 0.068);
+        const monthlyPension60 = calculateMonthlyPension(totalSavings, 0.060);
+        document.getElementById('monthly-pension-68').textContent = monthlyPension68.toFixed(2);
+        document.getElementById('monthly-pension-60').textContent = monthlyPension60.toFixed(2);
+        document.getElementById('yearly-pension-68').textContent = (monthlyPension68 * 12).toFixed(2);
+        document.getElementById('yearly-pension-60').textContent = (monthlyPension60 * 12).toFixed(2);
 
         document.getElementById('result-section').style.display = 'block';
         updateCharts(age, retirementAge, startSalary, endSalary, totalSavings);
+
+        // Update and show post-calculation text
+        document.getElementById('result-capital').textContent = totalSavings.toFixed(2);
+        document.getElementById('result-pension-low').textContent = monthlyPension60.toFixed(2);
+        document.getElementById('result-pension-high').textContent = monthlyPension68.toFixed(2);
+        document.getElementById('post-calculation-text').style.display = 'block';
     }
+
 
     // Function to show/hide salary options based on user selection
     function toggleSalaryOptions() {
