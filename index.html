@@ -46,6 +46,10 @@
             border: 1px solid #91d5ff;
             border-radius: 5px;
         }
+        #explanation-text {
+            background-color: #f6ffed;
+            border-color: #b7eb8f;
+        }
         .charts-container {
             display: flex;
             justify-content: space-between;
@@ -224,6 +228,19 @@
                     <p>Für eine detaillierte und persönliche Beratung empfehlen wir, einen Finanzberater oder deine Pensionskasse zu kontaktieren.</p>
                 </div>
             </div>
+            <div id="explanation-text">
+            <h2>Erklärung der Berechnungen</h2>
+            <p>Hier sind einige wichtige Punkte zu verstehen:</p>
+            <ul>
+                <li>Dein Sparprozess begann im Alter von <span id="explanation-start-age"></span> Jahren und endet mit <span id="explanation-retirement-age"></span> Jahren.</li>
+                <li>Wir haben eine jährliche Lohnsteigerung von durchschnittlich <span id="explanation-salary-increase"></span>% angenommen.</li>
+                <li>Die Beitragssätze variieren je nach Altersgruppe, von 7% bis 18% des versicherten Lohns.</li>
+                <li>Wir haben eine jährliche Inflationsrate von 1% in unsere Berechnungen einbezogen.</li>
+                <li>Der Umwandlungssatz von 6,8% ist der gesetzliche Mindestsatz, während 6,0% ein realistischerer Satz für die Zukunft sein könnte.</li>
+            </ul>
+            <p>Beachte, dass diese Berechnungen Schätzungen sind und die tatsächlichen Werte aufgrund verschiedener Faktoren abweichen können.</p>
+        </div>
+    </section>
         </section>
 
 
@@ -435,9 +452,18 @@
 
         // Update and show post-calculation text
         document.getElementById('result-capital').textContent = totalSavings.toFixed(2);
-        document.getElementById('result-pension-low').textContent = monthlyPension60.toFixed(2);
-        document.getElementById('result-pension-high').textContent = monthlyPension68.toFixed(2);
+        document.getElementById('result-pension-low').textContent = calculateMonthlyPension(totalSavings, 0.060).toFixed(2);
+        document.getElementById('result-pension-high').textContent = calculateMonthlyPension(totalSavings, 0.068).toFixed(2);
         document.getElementById('post-calculation-text').style.display = 'block';
+
+        // Update and show explanation text
+        const yearsWorking = retirementAge - age;
+        const averageSalaryIncrease = ((endSalary / startSalary) ** (1 / yearsWorking) - 1) * 100;
+        
+        document.getElementById('explanation-start-age').textContent = age;
+        document.getElementById('explanation-retirement-age').textContent = retirementAge;
+        document.getElementById('explanation-salary-increase').textContent = averageSalaryIncrease.toFixed(2);
+        document.getElementById('explanation-text').style.display = 'block';
     }
 
 
